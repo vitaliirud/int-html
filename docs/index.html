@@ -447,17 +447,39 @@
     </section>
     <script>
       (function () {
+        const list = document.querySelector(".doc-list");
+        const items = list
+          ? Array.from(list.querySelectorAll(".doc-item"))
+          : [];
+
+        // sort items alphabetically by visible title text
+        if (list && items.length > 1) {
+          const sorted = items.slice().sort(function (a, b) {
+            const ta = (a.querySelector(".doc-title")?.textContent || "")
+              .trim()
+              .toLowerCase();
+            const tb = (b.querySelector(".doc-title")?.textContent || "")
+              .trim()
+              .toLowerCase();
+            if (ta < tb) return -1;
+            if (ta > tb) return 1;
+            return 0;
+          });
+
+          sorted.forEach(function (item) {
+            list.appendChild(item);
+          });
+        }
+
         const input = document.getElementById("doc-search");
         if (!input) return;
-
-        const items = Array.from(
-          document.querySelectorAll(".doc-list .doc-item")
-        );
 
         input.addEventListener("input", function () {
           const term = this.value.trim().toLowerCase();
 
-          items.forEach(function (item) {
+          (list ? list.querySelectorAll(".doc-item") : []).forEach(function (
+            item
+          ) {
             const titleEl = item.querySelector(".doc-title");
             const metaEl = item.querySelector(".doc-meta-path");
             const text =
