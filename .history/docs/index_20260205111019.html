@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nederlands leren – Documenten</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --bg-elevated: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.1);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: rgba(148, 163, 184, 0.35);
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.65);
+      --radius-lg: 18px;
+      --radius-md: 10px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #1e293b, #020617 55%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 980px;
+      background: radial-gradient(circle at top, #020617, #020617 40%, #020617);
+      border-radius: 28px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(24px);
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.9),
+        rgba(15, 23, 42, 0.65)
+      );
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+    }
+
+    .dot.red {
+      background: linear-gradient(145deg, #f97373, #f43f5e);
+    }
+    .dot.amber {
+      background: linear-gradient(145deg, #facc15, #f59e0b);
+    }
+    .dot.green {
+      background: linear-gradient(145deg, #4ade80, #22c55e);
+    }
+
+    .shell-title {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+
+    .shell-badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--muted);
+    }
+
+    .layout {
+      padding: 22px 22px 24px;
+    }
+
+    .panel-main {
+      background: radial-gradient(circle at top left, #020617, #020617 70%);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 18px 18px 16px;
+    }
+
+    .tagline {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-size: clamp(24px, 3vw, 28px);
+      font-weight: 650;
+      margin: 0 0 6px;
+    }
+
+    .subtitle {
+      margin: 0 0 14px;
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 520px;
+    }
+
+    .search-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      max-width: 420px;
+    }
+
+    .search-label {
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 11px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease,
+        background-color 0.15s ease;
+    }
+
+    .search-input::placeholder {
+      color: var(--muted);
+    }
+
+    .search-input:focus-visible {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.8);
+      background: rgba(15, 23, 42, 0.98);
+    }
+
+    .list-wrapper {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: radial-gradient(circle at top, #020617, #020617 55%, #0b1220);
+      padding: 8px;
+      max-height: min(60vh, 460px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scroll-behavior: smooth;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 4px 4px 6px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+      margin-bottom: 4px;
+    }
+
+    .list-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+    }
+
+    .list-counter {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .doc-list {
+      list-style: none;
+      margin: 0;
+      padding: 4px 0 2px;
+    }
+
+    .doc-item + .doc-item {
+      border-top: 1px dashed rgba(51, 65, 85, 0.9);
+    }
+
+    .doc-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 6px;
+      text-decoration: none;
+      color: inherit;
+      border-radius: 9px;
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease,
+        border-color 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .doc-link:focus-visible {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.8);
+    }
+
+    .doc-link:hover {
+      background: radial-gradient(circle at left, var(--accent-soft), transparent);
+      transform: translateY(-1px);
+      border-color: rgba(56, 189, 248, 0.55);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.7);
+    }
+
+    .doc-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 11px;
+      background: radial-gradient(circle at 20% 0%, #38bdf8, #0ea5e9 40%, #0369a1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #e0f2fe;
+      font-size: 15px;
+      box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4);
+      flex-shrink: 0;
+    }
+
+    .doc-content {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .doc-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .doc-meta {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .doc-meta-type {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .doc-meta-path {
+      opacity: 0.8;
+    }
+
+  </style>
+</head>
+<body>
+  <main class="shell" aria-label="Nederlands leren document overzicht">
+    <header class="shell-header">
+      <div class="window-dots" aria-hidden="true">
+        <span class="dot red"></span>
+        <span class="dot amber"></span>
+        <span class="dot green"></span>
+      </div>
+      <div class="shell-title">Nederlands leren · Docs hub</div>
+      <div class="shell-badge">HTML · Reading practice</div>
+    </header>
+
+    <section class="layout">
+      <section class="panel-main">
+        <div class="search-row">
+          <label class="search-label" for="doc-search">Search by title</label>
+          <input
+            id="doc-search"
+            class="search-input"
+            type="text"
+            placeholder="Start typing to filter documents…"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="list-wrapper" aria-label="Lijst met documenten">
+          <div class="list-header">
+            <span class="list-title">Available texts</span>
+            <span class="list-counter">9 documents</span>
+          </div>
+
+          <ul class="doc-list">
+            <li class="doc-item">
+              <a class="doc-link" href="Nederland_moet_Bonaire_beschermen_partijen_gaan_regeren_en_operaties_voor_vrouwe.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">NL</span>
+                <div class="doc-content">
+                  <div class="doc-title">
+                    Nederland moet Bonaire beschermen – partijen gaan regeren en operaties voor vrouwen
+                  </div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Nieuws / maatschappij</span>
+                    <span class="doc-meta-path">Nederland_moet_Bonaire_….html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+
+            <li class="doc-item">
+              <a class="doc-link" href="Nieuwe_politieke_plannen_kou_in_Oekraine_grote_wielrenwedstrijd_in_Hulst.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">NL</span>
+                <div class="doc-content">
+                  <div class="doc-title">
+                    Nieuwe politieke plannen, kou in Oekraïne &amp; grote wielrenwedstrijd in Hulst
+                  </div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Nieuws / actualiteit</span>
+                    <span class="doc-meta-path">Nieuwe_politieke_plannen_….html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+
+            <li class="doc-item">
+              <a class="doc-link" href="Studie_Airco-_Warmtepompmonteur.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">ST</span>
+                <div class="doc-content">
+                  <div class="doc-title">Studie: Airco- &amp; warmtepompmonteur</div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Studie / beroep</span>
+                    <span class="doc-meta-path">Studie_Airco-_Warmtepompmonteur.html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+
+            <li class="doc-item">
+              <a class="doc-link" href="Studie_Allround_Constructiewerker.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">ST</span>
+                <div class="doc-content">
+                  <div class="doc-title">Studie: Allround constructiewerker</div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Studie / beroep</span>
+                    <span class="doc-meta-path">Studie_Allround_Constructiewerker.html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+
+            <li class="doc-item">
+              <a class="doc-link" href="Tekst 6- Watersnoodramp en -museum.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">T6</span>
+                <div class="doc-content">
+                  <div class="doc-title">Tekst 6 – Watersnoodramp en museum</div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Tekst / geschiedenis</span>
+                    <span class="doc-meta-path">Tekst 6- Watersnoodramp en -museum.html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+
+            <li class="doc-item">
+              <a class="doc-link" href="Tekst 7- Docent Frans.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">T7</span>
+                <div class="doc-content">
+                  <div class="doc-title">Tekst 7 – Docent Frans</div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Tekst / beroep</span>
+                    <span class="doc-meta-path">Tekst 7- Docent Frans.html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+
+            <li class="doc-item">
+              <a class="doc-link" href="Tekst_2_Fitness_instructeur.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">T2</span>
+                <div class="doc-content">
+                  <div class="doc-title">Tekst 2 – Fitness instructeur</div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Tekst / beroep</span>
+                    <span class="doc-meta-path">Tekst_2_Fitness_instructeur.html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+
+            <li class="doc-item">
+              <a class="doc-link" href="Tekst_5_Stewardess.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">T5</span>
+                <div class="doc-content">
+                  <div class="doc-title">Tekst 5 – Stewardess</div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Tekst / beroep</span>
+                    <span class="doc-meta-path">Tekst_5_Stewardess.html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+
+            <li class="doc-item">
+              <a class="doc-link" href="Why_Do_the_Dutch_Switch_to_English_Easy_Dutch_87.html" target="_blank" rel="noopener noreferrer">
+                <span class="doc-icon">ED</span>
+                <div class="doc-content">
+                  <div class="doc-title">Why do the Dutch switch to English? (Easy Dutch 87)</div>
+                  <div class="doc-meta">
+                    <span class="doc-meta-type">Video transcript / uitleg</span>
+                    <span class="doc-meta-path">Why_Do_the_Dutch_Switch_to_English_Easy_Dutch_87.html</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </section>
+    <script>
+      (function () {
+        const input = document.getElementById("doc-search");
+        if (!input) return;
+
+        const items = Array.from(
+          document.querySelectorAll(".doc-list .doc-item")
+        );
+
+        input.addEventListener("input", function () {
+          const term = this.value.trim().toLowerCase();
+
+          items.forEach(function (item) {
+            const titleEl = item.querySelector(".doc-title");
+            const metaEl = item.querySelector(".doc-meta-path");
+            const text =
+              (titleEl?.textContent || "") +
+              " " +
+              (metaEl?.textContent || "");
+
+            if (!term || text.toLowerCase().includes(term)) {
+              item.style.display = "";
+            } else {
+              item.style.display = "none";
+            }
+          });
+        });
+      })();
+    </script>
+  </main>
+</body>
+</html>
