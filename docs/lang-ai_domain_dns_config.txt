@@ -1,0 +1,11 @@
+;;
+;;	Domain:    lang-ai.online
+;; 	Exported:  2026-02-17 17:24:28
+;;
+$ORIGIN lang-ai.online
+$TTL 900
+@	IN	A	91.206.201.91
+www	IN	A	91.206.201.91
+*	IN	A	91.206.201.91
+@	IN	MX	0 mx.services.
+@	IN	TXT	v=spf1 include:_spf.ukraine.com.ua ~all
