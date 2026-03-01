@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>B1: Frequentie #1</title>
+  <style>
+    :root{
+      --bg: #070A12;
+      --panel: rgba(18, 24, 38, 0.72);
+      --panel2: rgba(15, 23, 42, 0.65);
+      --card: rgba(17, 24, 39, 0.92);
+      --border: rgba(148, 163, 184, 0.18);
+      --muted: rgba(226, 232, 240, 0.68);
+      --text: rgba(248, 250, 252, 0.92);
+      --primary: #3b82f6;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --shadow: 0 18px 60px rgba(0,0,0,0.45);
+      --radius: 34px;
+      --radius2: 22px;
+      --safeTop: env(safe-area-inset-top, 0px);
+      --safeBottom: env(safe-area-inset-bottom, 0px);
+      --safeLeft: env(safe-area-inset-left, 0px);
+      --safeRight: env(safe-area-inset-right, 0px);
+    }
+    *{ box-sizing:border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
+      background: radial-gradient(1000px 600px at 20% 10%, rgba(59,130,246,0.25), transparent 45%),
+                  radial-gradient(1100px 700px at 80% 30%, rgba(16,185,129,0.18), transparent 50%),
+                  radial-gradient(1000px 650px at 50% 90%, rgba(99,102,241,0.18), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+    .app{
+      height: 100dvh;
+      min-height: 100vh;
+      padding: calc(14px + var(--safeTop)) calc(14px + var(--safeRight)) calc(14px + var(--safeBottom)) calc(14px + var(--safeLeft));
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .title{
+      font-size: 13px;
+      line-height: 1.2;
+      color: var(--muted);
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 70%;
+    }
+    .count{
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .stage{
+      position: relative;
+      flex: 1 1 auto;
+      display:flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 26px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(2,6,23,0.30), rgba(2,6,23,0.15));
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    }
+    .nav{
+      position:absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: rgba(248,250,252,0.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.30);
+    }
+    .nav:active{ transform: translateY(-50%) scale(0.98); }
+    .nav[disabled]{ opacity:0.35; cursor: default; }
+    .nav.left{ left: 12px; }
+    .nav.right{ right: 12px; }
+    .card-wrap{
+      width: min(640px, 100%);
+      height: 100%;
+      padding: 18px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .card{
+      width: 100%;
+      height: 100%;
+      max-height: 720px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(148,163,184,0.22);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 22px 22px;
+      display:flex;
+      flex-direction: column;
+      justify-content:center;
+      gap: 14px;
+      cursor:pointer;
+      user-select:none;
+    }
+    @media (max-height: 740px){
+      .card{ max-height: 640px; padding: 18px 18px; }
+    }
+    @media (max-height: 680px){
+      .card{ max-height: 580px; }
+    }
+    .wordline{
+      position: relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 0 34px;
+    }
+    .word{
+      font-size: 40px;
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      text-align:center;
+      white-space: pre-wrap;
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+    @media (max-width: 420px){
+      .word{ font-size: 34px; }
+    }
+    .audio-btn{
+      position:absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.22);
+      background: rgba(2,6,23,0.40);
+      color: rgba(248,250,252,0.9);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    .audio-btn.show{ display:flex; }
+    .audio-btn:active{ transform: translateY(-50%) scale(0.98); }
+    .notes{
+      display:none;
+      padding-top: 4px;
+      text-align:left;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+    .notes.show{ display:block; }
+    .note-original{ font-size: 17px; color: rgba(248,250,252,0.92); }
+    .note-translation{ font-size: 14px; color: rgba(226,232,240,0.72); font-style: italic; }
+    .note-text{ font-size: 14px; color: rgba(226,232,240,0.72); }
+    .note-blank{ height: 10px; }
+    .img{
+      display:none;
+      margin-top: 6px;
+      justify-content:center;
+    }
+    .img.show{ display:flex; }
+    .img img{
+      max-height: 220px;
+      max-width: 100%;
+      border-radius: var(--radius2);
+      border: 1px solid rgba(148,163,184,0.20);
+      object-fit: contain;
+      background: rgba(2,6,23,0.25);
+    }
+    .bottom{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 12px;
+    }
+    .actions{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .stat{
+      min-width: 44px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .stat.bad{ color: var(--danger); }
+    .stat.good{ color: var(--success); text-align:right; }
+    .btns{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:center;
+      flex: 1 1 auto;
+    }
+    .btn{
+      flex: 1 1 0;
+      border-radius: 999px;
+      padding: 10px 12px;
+      border: 1px solid rgba(148,163,184,0.22);
+      background: rgba(2,6,23,0.35);
+      color: rgba(248,250,252,0.92);
+      font-size: 14px;
+      font-weight: 600;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn[disabled]{ opacity:0.35; cursor: default; }
+    .btn.danger{ border-color: rgba(239,68,68,0.35); }
+    .btn.success{ border-color: rgba(34,197,94,0.35); }
+    .btn:active{ transform: scale(0.99); }
+    .progress{
+      height: 6px;
+      width: 100%;
+      border-radius: 999px;
+      overflow:hidden;
+      background: rgba(148,163,184,0.18);
+    }
+    .bar{
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(59,130,246,1), rgba(99,102,241,1));
+      transition: width 180ms ease;
+    }
+    .meta{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .mini-btn{
+      border: 1px solid rgba(148,163,184,0.22);
+      background: rgba(2,6,23,0.25);
+      color: rgba(248,250,252,0.85);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="title">B1: Frequentie #1</div>
+      <div class="count" id="countLabel"></div>
+    </div>
+
+    <div class="stage" id="stage">
+      <button class="nav left" id="btnPrev" type="button" aria-label="Назад">‹</button>
+      <button class="nav right" id="btnNext" type="button" aria-label="Далее">›</button>
+      <div class="card-wrap">
+        <div class="card" id="card">
+          <div class="wordline">
+            <div class="word" id="word"></div>
+            <button class="audio-btn" id="btnAudio" type="button" aria-label="Проиграть аудио">🔊</button>
+          </div>
+          <div class="notes" id="notes"></div>
+          <div class="img" id="imgWrap"><img id="img" alt=""></div>
+          <audio id="audio" class="hidden"></audio>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="actions">
+        <div class="stat bad" id="unknownCount">0</div>
+        <div class="btns">
+          <button class="btn danger" id="btnDontKnow" type="button">Не знаю</button>
+          <button class="btn success" id="btnKnow" type="button">Знаю</button>
+        </div>
+        <div class="stat good" id="knownCount">0</div>
+      </div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="meta">
+        <button class="mini-btn" id="btnRestart" type="button">Начать заново</button>
+        <div id="metaText"></div>
+        <div style="width: 86px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const cardsData = {"title":"B1: Frequentie #1","cards":[{"id":"384647ff-5402-4492-884f-716ca1778250","front":"doorgeven","back":"«передавать», «сообщать», «передать дальше»","notes":"•\tKun je dit bericht aan hem doorgeven?\n«Можешь передать это сообщение ему?»\n\t•\tZe gaf het zout door aan haar buurman.\n«Она передала соль своему соседу».\n\t•\tDe leraar geeft de informatie door aan de leerlingen.\n«Учитель сообщает информацию ученикам».","imageUrl":null,"audioUrl":null},{"id":"71271d4e-616b-4e9c-8723-a688682b0a25","front":"het tegendeel","back":"«противоположное», «наоборот», «противоположность»","notes":"•\tHet tegendeel is waar.\n«Верно обратное / Наоборот».\n\t•\tHij zegt het ene, maar het tegendeel doet hij.\n«Он говорит одно, но делает противоположное».","imageUrl":null,"audioUrl":null},{"id":"593d4809-460a-41a4-b84c-f7b0104cc0bd","front":"nogmaals","back":"«ещё раз», «снова»","notes":"•\tDank je nogmaals voor je hulp.\n«Ещё раз спасибо за твою помощь».\n\t•\tIk wil het nogmaals uitleggen.\n«Я хочу объяснить это ещё раз».\n\t•\tKun je dat nogmaals zeggen?\n«Можешь сказать это ещё раз?»","imageUrl":null,"audioUrl":null},{"id":"b1629b27-edae-484e-a511-45cff0f6bbd3","front":"tegenkomen","back":"«встречать», «сталкиваться с»","notes":"•\tIk kwam hem gisteren op straat tegen.\n«Я встретил его вчера на улице».\n\t•\tWe kwamen veel oude vrienden tegen op het feest.\n«Мы встретили много старых друзей на празднике».\n\t•\tTijdens het project kwamen we veel problemen tegen.\n«Во время проекта мы столкнулись с множеством проблем».\n\t•\tJe kunt onverwachte obstakels tegenkomen.\n«Ты можешь столкнуться с неожиданными препятствиями».","imageUrl":null,"audioUrl":null},{"id":"6f4bea8c-bf80-4b47-ac2e-03d727502c41","front":"middelen","back":"«средства», «ресурсы», «инструменты»","notes":"•\tWe hebben voldoende middelen om het project te realiseren.\n«У нас есть достаточно средств, чтобы реализовать проект».\n\t•\tHet bedrijf investeert in nieuwe middelen voor productie.\n«Компания инвестирует в новые средства для производства».\n\t•\tCommunicatie is een belangrijk middel om problemen op te lossen.\n«Коммуникация — важное средство для решения проблем».\n\t•\tOnderwijs is een middel tot persoonlijke ontwikkeling.\n«Образование — средство личностного развития».","imageUrl":null,"audioUrl":null},{"id":"182fb6ad-b8cd-4c37-b1ca-dd6c7db591b6","front":"vanmorgen","back":"«сегодня утром»","notes":"•\tVanmorgen heb ik de krant gelezen.\n«Сегодня утром я читал газету».\n\t•\tWe hebben vanmorgen een vergadering gehad.\n«Сегодня утром у нас было совещание».\n\t•\tVanmorgen was het erg koud.\n«Сегодня утром было очень холодно».","imageUrl":null,"audioUrl":null},{"id":"9e917942-9d85-4dd0-a2ad-851215744585","front":"binnenkort","back":"«в ближайшее время», «скоро»","notes":"•\tDe resultaten komen binnenkort.\n«Результаты появятся скоро».\n\t•\tIk zie je binnenkort weer.\n«Я увижу тебя снова в ближайшее время».\n\t•\tBinnenkort begint de vergadering.\n«Совещание начнётся скоро».","imageUrl":null,"audioUrl":null},{"id":"f4ec9a3e-bea8-4ef3-a1d5-33ad07dbe7ed","front":"opbouwen","back":"«строить», «создавать», «накапливать», «развивать»","notes":"•\tZe bouwen een huis op.\n«Они строят дом».\n\t•\tHet team bouwde een podium op voor het concert.\n«Команда собирала сцену для концерта».\n\t•\tHij bouwt langzaam zijn carrière op.\n«Он постепенно строит / развивает свою карьеру».\n\t•\tWe moeten vertrouwen opbouwen met de klant.\n«Нам нужно выстраивать доверие с клиентом».\n\t•\tDoor ervaring bouw je kennis op.\n«Через опыт накапливаешь знания».","imageUrl":null,"audioUrl":null},{"id":"cc1c3bb4-d443-438e-85bc-c555052cde3a","front":"achter","back":"«позади», «сзади», «за»","notes":"•\tDe auto staat achter het huis.\n«Машина стоит за домом».\n\t•\tHij loopt achter mij.\n«Он идёт за мной».\n\t•\tHij blijft achter met zijn werk.\n«Он отстаёт со своей работой».\n\t•\tZe staat achter haar beslissing.\n«Она поддерживает своё решение / стоит за своим решением».","imageUrl":null,"audioUrl":null},{"id":"6f2b3866-27eb-4563-8882-4aa73846b4c0","front":"ongelooflijk","back":"«невероятный», «невообразимый», «поразительный»","notes":"•\tHet is ongelooflijk dat hij dat heeft gedaan.\n«Невероятно, что он это сделал».\n\t•\tWat een ongelooflijk mooi uitzicht!\n«Какой потрясающе красивый вид!»\n\t•\tZe werkt ongelooflijk hard.\n«Она работает невероятно усердно».","imageUrl":null,"audioUrl":null},{"id":"8a775ae5-6518-4085-be0c-bab4cd5dbf9e","front":"zich verheugen op","back":"«радоваться (чему-то будущему)», «ждать с нетерпением»","notes":"•\tIk verheug me op het feest morgen.\n«Я с нетерпением жду вечеринки завтра».\n\t•\tWe verheugen ons op de vakantie.\n«Мы радуемся предстоящему отпуску».\n\t•\tHij verheugt zich op het nieuwe project.\n«Он с нетерпением ждёт новый проект».","imageUrl":null,"audioUrl":null},{"id":"88e935a9-adbd-475d-b9e8-48de7eff892f","front":"gemiddeld","back":"«средний», «в среднем»","notes":"•\tDe gemiddelde leeftijd van de leerlingen is 15 jaar.\n«Средний возраст учеников — 15 лет».\n\t•\tHij verdient gemiddeld 2500 euro per maand.\n«Он зарабатывает в среднем 2500 евро в месяц».\n\t•\tHet weer is gemiddeld deze week.\n«Погода на этой неделе средняя / обычная».","imageUrl":null,"audioUrl":null},{"id":"9716106c-e41e-48f8-8a5a-eeebe6282c90","front":"de volgorde","back":"«порядок», «последовательность»","notes":"•\tDe volgorde van de hoofdstukken is belangrijk.\n«Порядок глав важен».\n\t•\tVolg de volgorde van de stappen in de handleiding.\n«Следуйте последовательности шагов в инструкции».\n\t•\tIn welke volgorde wil je de taken doen?\n«В каком порядке ты хочешь выполнять задания?»","imageUrl":null,"audioUrl":null},{"id":"04d55a3e-ae75-46dc-831d-0b0b7c914a8b","front":"betrouwbaar","back":"«надёжный», «достоверный», «верный»","notes":"•\tHij is een betrouwbare collega.\n«Он надёжный коллега».\n\t•\tDeze bron is betrouwbaar.\n«Этот источник достоверен».\n\t•\tMijn auto is altijd betrouwbaar.\n«Моя машина всегда надёжна».","imageUrl":null,"audioUrl":null},{"id":"a042b83c-ace4-41c9-9d9e-12bb6a95fb51","front":"instellen","back":"«настраивать», «регулировать», «устанавливать», «назначать»","notes":"•\tIk stel de klok in.\n«Я настраиваю часы».\n\t•\tJe kunt de temperatuur instellen op 22 graden.\n«Ты можешь установить температуру на 22 градуса».\n\t•\tDe directeur stelt een nieuwe manager in.\n«Директор назначает нового менеджера».\n\t•\tJe moet je instellen op veranderingen.\n«Тебе нужно настроиться на изменения».","imageUrl":null,"audioUrl":null},{"id":"cdd2cef2-7881-43cb-be0f-2b7cfac87295","front":"adviseren","back":"«советовать», «давать рекомендации»","notes":"•\tDe dokter adviseert gezonde voeding.\r\n«Доктор советует здоровое питание».\r\n\t•\tIk adviseer je om op tijd te beginnen.\r\n«Я советую тебе начать вовремя».\r\n\t•\tHet bedrijf adviseert klanten over financiële zaken.\r\n«Компания консультирует клиентов по финансовым вопросам».","imageUrl":null,"audioUrl":null},{"id":"5ff640a3-3265-46d6-bb3c-dd4c175eab62","front":"gespannen","back":"«напряжённый», «волнующийся», «настороженный»","notes":"•\tIk ben gespannen voor het examen.\n«Я напряжён / волнуюсь перед экзаменом».\n\t•\tZe voelde zich gespannen tijdens de presentatie.\n«Она чувствовала напряжение во время презентации».\n\t•\tEr hangt een gespannen sfeer in de vergadering.\n«В совещании царит напряжённая атмосфера».","imageUrl":null,"audioUrl":null},{"id":"a6c18d8a-7bb9-4107-bd11-092be553c197","front":"lastig","back":"«трудный», «сложный», «надоедливый», «неудобный»","notes":"•\tDe toets was erg lastig.\n«Тест был очень сложный».\n\t•\tHet is lastig om op tijd te komen.\n«Сложно / неудобно прийти вовремя»","imageUrl":null,"audioUrl":null},{"id":"204145ef-8129-4502-9d09-93bc8ec6cf33","front":"creëren","back":"«создавать», «творить»","notes":"•\tZe creëert mooie schilderijen.\n«Она создаёт красивые картины».\n\t•\tWij willen een nieuwe app creëren.\n«Мы хотим создать новое приложение».\n\t•\tDe samenwerking creëert kansen voor iedereen.\n«Сотрудничество создаёт возможности для всех».\n\t•\tDeze beslissing creëert problemen.\n«Это решение создаёт проблемы».","imageUrl":null,"audioUrl":null},{"id":"8ef1f80c-ff38-49d3-8d7a-028abe71db4e","front":"afmaken","back":"«заканчивать», «доводить до конца», «дописывать / доделывать»","notes":"•\tKun je dit project afmaken?\n«Можешь закончить этот проект?»\n\t•\tZe maakt haar schilderij af.\n«Она завершает свою картину».","imageUrl":null,"audioUrl":null},{"id":"4ed908a3-5f46-4291-b9b3-95c9a188cd37","front":"nieuwsgierig","back":"«любопытный», «заинтересованный», «любознательный»","notes":"•\tIk ben benieuwd en nieuwsgierig naar het resultaat.\n«Мне интересно и любопытно узнать результат».\n\t•\tZe is te nieuwsgierig naar andermans zaken.\n«Она слишком любопытна к делам других людей».","imageUrl":null,"audioUrl":null},{"id":"ff8c758f-c906-4586-bfd7-0fd75798ca80","front":"het tekort","back":"«нехватка», «дефицит», «недостаток»","notes":"•\tEr is een tekort aan leraren.\n«Не хватает учителей».\n\t•\tHet tekort aan geld zorgt voor problemen.\n«Нехватка денег вызывает проблемы».\n\t•\tDoor het tekort aan tijd kunnen we het project niet afmaken.\n«Из-за нехватки времени мы не можем закончить проект».","imageUrl":null,"audioUrl":null},{"id":"fec6fab7-dae7-4087-805f-494eba5724ba","front":"wederom","back":"«снова», «в очередной раз», «ещё раз»","notes":"•\tHet probleem doet zich wederom voor.\n«Проблема возникает снова / в очередной раз».\n\t•\tWederom bedankt voor je hulp.\n«Ещё раз спасибо за твою помощь».\n\t•\tDe vergadering werd wederom uitgesteld.\n«Собрание было снова отложено».","imageUrl":null,"audioUrl":null},{"id":"02165a0c-7b27-4da5-906a-0f6673a5c59c","front":"het nut","back":"«польза», «выгода», «целесообразность»","notes":"•\tHet nut van deze oefening is duidelijk.\n«Польза этого упражнения очевидна».\n\t•\tWat is het nut van dit apparaat?\n«В чём польза этого устройства?»\n\t•\tHij ziet het nut niet van hard werken.\n«Он не видит смысла усердно работать».","imageUrl":null,"audioUrl":null},{"id":"82662e7d-b224-4a42-b442-3fee9a4b5607","front":"gevoelig","back":"«чувствительный», «ранимый», «деликатный»","notes":"•\tMijn huid is gevoelig voor zon.\n«Моя кожа чувствительна к солнцу».\n\t•\tZe is erg gevoelig voor kritiek.\n«Она очень чувствительна к критике».\n\t•\tHet is een gevoelig onderwerp.\n«Это деликатная тема».","imageUrl":null,"audioUrl":null},{"id":"12bdd08e-2a1d-49b5-bb6d-26f0ab1a8e31","front":"omheen","back":"«вокруг», «обходя», «около»","notes":"•\tWe lopen om het huis heen.\n«Мы идём вокруг дома».\n\t•\tEr is een manier omheen te komen.\n«Есть способ обойти это / найти обходной путь».","imageUrl":null,"audioUrl":null},{"id":"5eb32487-ff91-4b6d-811c-04785cac7375","front":"begeleiding","back":"«сопровождение», «руководство», «поддержка», «наставничество»","notes":"•\tDe leerlingen krijgen begeleiding bij hun project.\n«Ученики получают поддержку при работе над проектом».\n\t•\tHij biedt begeleiding aan nieuwe medewerkers.\n«Он предоставляет наставничество новым сотрудникам».\n\t•\tBegeleiding door een specialist is aanbevolen.\n«Сопровождение специалиста рекомендуется».","imageUrl":null,"audioUrl":null},{"id":"11fb871a-f207-4275-8686-f52a9c700ae2","front":"teruggaan","back":"«возвращаться», «идти обратно»","notes":"•\tWe gaan terug naar het begin van het verhaal.\n«Мы возвращаемся к началу рассказа».\n\t•\tHij wil teruggaan naar zijn oude baan.\n«Он хочет вернуться на свою прежнюю работу».","imageUrl":null,"audioUrl":null},{"id":"8917ff1d-2732-4add-ad38-4f7073cc45ff","front":"onbekend","back":"«неизвестный», «незнакомый»","notes":"•\tHet onbekende kan spannend zijn.\n«Неизвестное может быть захватывающим».\n\t•\tIk ben onbekend met deze regels.\n«Я не знаком с этими правилами».\n\t•\tEen onbekende man belt aan de deur.\n«Неизвестный мужчина звонит в дверь».","imageUrl":null,"audioUrl":null},{"id":"e65ff272-b9d5-4f07-9397-0cdc0673d20a","front":"bijdragen (aan)","back":"«вносить вклад», «содействовать», «участвовать»","notes":"•\tHij draagt bij aan het succes van het team.\n«Он вносит вклад в успех команды».\n\t•\tIedereen kan bijdragen aan dit project.\n«Каждый может внести вклад в этот проект».\n\t•\tZe dragen financieel bij aan de organisatie.\n«Они вносят финансовый вклад в организацию».\n\t•\tWe moeten allemaal bijdragen aan een beter milieu.\n«Мы все должны способствовать улучшению окружающей среды».","imageUrl":null,"audioUrl":null}]};
+    const cards = Array.isArray(cardsData.cards) ? cardsData.cards : [];
+    const byId = new Map(cards.map(c => [String(c.id), c]));
+
+    const initialOrder = cards.map(c => String(c.id));
+    let order = initialOrder.slice();
+    let cursor = 0;
+    let showBack = false;
+    let answersById = {}; // id -> 'known'|'unknown'
+
+    const elCountLabel = document.getElementById('countLabel');
+    const elMetaText = document.getElementById('metaText');
+    const elWord = document.getElementById('word');
+    const elNotes = document.getElementById('notes');
+    const elImgWrap = document.getElementById('imgWrap');
+    const elImg = document.getElementById('img');
+    const elBar = document.getElementById('bar');
+    const elKnown = document.getElementById('knownCount');
+    const elUnknown = document.getElementById('unknownCount');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const btnKnow = document.getElementById('btnKnow');
+    const btnDontKnow = document.getElementById('btnDontKnow');
+    const btnRestart = document.getElementById('btnRestart');
+    const btnAudio = document.getElementById('btnAudio');
+    const audio = document.getElementById('audio');
+    const stage = document.getElementById('stage');
+    const cardEl = document.getElementById('card');
+
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+    function currentId(){ return order[cursor] || null; }
+    function currentCard(){ const id = currentId(); return id ? (byId.get(id) || null) : null; }
+    function uniqueDone(){ return Object.keys(answersById).length; }
+    function knownCount(){ return Object.values(answersById).filter(v => v === 'known').length; }
+    function unknownCount(){ return Object.values(answersById).filter(v => v === 'unknown').length; }
+    function progressPercent(){
+      const total = initialOrder.length || 0;
+      if (!total) return 0;
+      return clamp(Math.round((uniqueDone() / total) * 100), 0, 100);
+    }
+    function fmtNotes(raw){
+      const s = String(raw || '');
+      if (!s.trim()) return '';
+      const lines = s.split(/\r?\n/g);
+      return lines.map(line => {
+        const t = String(line || '');
+        const tt = t.trim();
+        if (!tt) return '<div class="note-blank"></div>';
+        if (/^•\s+/.test(tt)) return '<div class="note-original">' + escapeHtml(tt) + '</div>';
+        if (/^«[\s\S]*»$/.test(tt)) return '<div class="note-translation">' + escapeHtml(tt) + '</div>';
+        return '<div class="note-text">' + escapeHtml(tt) + '</div>';
+      }).join('');
+    }
+    function escapeHtml(input){
+      return String(input || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function fitWord(){
+      try {
+        elWord.style.fontSize = '';
+        const text = String(elWord.textContent || '').trim();
+        if (!text) return;
+        // Allow wrapping on spaces/hyphens; only shrink long single tokens.
+        if (/[s-]/.test(text)) return;
+
+        const cs = window.getComputedStyle(elWord);
+        const initial = parseFloat(cs.fontSize || '40') || 40;
+        let size = initial;
+        const min = 22;
+        let guard = 0;
+        while (guard < 18 && size > min && elWord.scrollWidth > elWord.clientWidth) {
+          size = Math.max(min, size - 1);
+          elWord.style.fontSize = size + 'px';
+          guard++;
+        }
+      } catch(e) {}
+    }
+
+    function render(){
+      const totalUnique = initialOrder.length || 0;
+      const totalOrder = order.length || 0;
+      const idx = clamp(cursor + 1, 0, totalOrder || 0);
+      elCountLabel.textContent = totalUnique ? (idx + ' / ' + totalUnique) : '';
+      elMetaText.textContent = totalUnique ? (idx + ' / ' + totalUnique + ' Карточек') : '';
+
+      elKnown.textContent = String(knownCount());
+      elUnknown.textContent = String(unknownCount());
+      elBar.style.width = progressPercent() + '%';
+
+      const c = currentCard();
+      const has = Boolean(c);
+      btnPrev.disabled = !has || cursor <= 0;
+      btnNext.disabled = !has || cursor >= (order.length - 1);
+
+      if (!c){
+        elWord.textContent = '—';
+        try { elWord.style.fontSize = ''; } catch(e) {}
+        elNotes.classList.remove('show');
+        elNotes.innerHTML = '';
+        elImgWrap.classList.remove('show');
+        elImg.src = '';
+        btnAudio.classList.remove('show');
+        btnKnow.disabled = true;
+        btnDontKnow.disabled = true;
+        return;
+      }
+
+      const prompt = String(c.back ?? '—');
+      const answer = String(c.front ?? '—');
+      elWord.textContent = showBack ? answer : prompt;
+      fitWord();
+
+      const notesHtml = showBack ? fmtNotes(c.notes) : '';
+      if (notesHtml){
+        elNotes.innerHTML = notesHtml;
+        elNotes.classList.add('show');
+      } else {
+        elNotes.classList.remove('show');
+        elNotes.innerHTML = '';
+      }
+
+      const imgUrl = showBack ? String(c.imageUrl || '').trim() : '';
+      if (imgUrl){
+        elImg.src = imgUrl;
+        elImgWrap.classList.add('show');
+      } else {
+        elImgWrap.classList.remove('show');
+        elImg.src = '';
+      }
+
+      const audioUrl = showBack ? String(c.audioUrl || '').trim() : '';
+      const hasAudio = audioUrl && audioUrl !== 'null' && audioUrl !== 'undefined';
+      if (hasAudio){
+        btnAudio.classList.add('show');
+        audio.src = audioUrl;
+      } else {
+        btnAudio.classList.remove('show');
+        audio.removeAttribute('src');
+      }
+
+      btnKnow.disabled = !showBack;
+      btnDontKnow.disabled = !showBack;
+    }
+
+    function flip(){
+      if (!currentCard()) return;
+      showBack = !showBack;
+      render();
+    }
+    function prev(){
+      cursor = clamp(cursor - 1, 0, Math.max(0, order.length - 1));
+      showBack = false;
+      render();
+    }
+    function next(){
+      cursor = clamp(cursor + 1, 0, Math.max(0, order.length - 1));
+      showBack = false;
+      render();
+    }
+    function mark(known){
+      const id = currentId();
+      if (!id) return;
+      answersById = Object.assign({}, answersById, { [id]: known ? 'known' : 'unknown' });
+      if (!known){
+        const existsLater = order.slice(cursor + 1).includes(id);
+        if (!existsLater) order = order.concat([id]);
+      }
+      showBack = false;
+      next();
+    }
+    function restart(){
+      order = initialOrder.slice();
+      cursor = 0;
+      showBack = false;
+      answersById = {};
+      render();
+    }
+
+    btnPrev.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+    btnNext.addEventListener('click', (e) => { e.stopPropagation(); next(); });
+    btnKnow.addEventListener('click', (e) => { e.stopPropagation(); mark(true); });
+    btnDontKnow.addEventListener('click', (e) => { e.stopPropagation(); mark(false); });
+    btnRestart.addEventListener('click', (e) => { e.stopPropagation(); restart(); });
+    btnAudio.addEventListener('click', (e) => {
+      e.stopPropagation();
+      try {
+        audio.currentTime = 0;
+        const p = audio.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch(e) {}
+    });
+    cardEl.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target && target.closest && target.closest('button, a, input, textarea, select, [role="button"]')) return;
+      flip();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.code === 'Space'){
+        e.preventDefault();
+        flip();
+        return;
+      }
+      if (e.key === 'ArrowLeft'){
+        e.preventDefault();
+        prev();
+        return;
+      }
+      if (e.key === 'ArrowRight'){
+        e.preventDefault();
+        next();
+      }
+    });
+
+    // Basic swipe for mobile
+    let touchX = null;
+    stage.addEventListener('touchstart', (e) => {
+      try { touchX = (e.touches && e.touches[0]) ? e.touches[0].clientX : null; } catch { touchX = null; }
+    }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      if (touchX == null) return;
+      let endX = null;
+      try { endX = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : null; } catch { endX = null; }
+      if (endX == null) { touchX = null; return; }
+      const dx = endX - touchX;
+      touchX = null;
+      if (Math.abs(dx) < 50) return;
+      if (dx > 0) prev();
+      else next();
+    }, { passive: true });
+
+    render();
+  </script>
+</body>
+</html>
