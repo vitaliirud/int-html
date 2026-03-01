@@ -38,7 +38,9 @@
       touch-action: manipulation;
     }
     .app{
-      height: 100dvh;
+      height: 100vh;
+      height: 100svh;
+      height: calc(var(--vh, 1vh) * 100);
       min-height: 100vh;
       padding: calc(14px + var(--safeTop)) calc(14px + var(--safeRight)) calc(14px + var(--safeBottom)) calc(14px + var(--safeLeft));
       display:flex;
@@ -539,6 +541,13 @@
       }
     });
 
+    function setVh(){
+      try {
+        const h = Math.max(320, window.innerHeight || 0);
+        document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
+      } catch(e) {}
+    }
+
     // Basic swipe for mobile
     let touchX = null;
     stage.addEventListener('touchstart', (e) => {
@@ -556,6 +565,9 @@
       else next();
     }, { passive: true });
 
+    setVh();
+    window.addEventListener('resize', () => { setVh(); }, { passive: true });
+    window.addEventListener('orientationchange', () => { setTimeout(setVh, 50); }, { passive: true });
     render();
   </script>
 </body>
