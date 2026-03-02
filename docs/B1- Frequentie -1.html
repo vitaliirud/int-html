@@ -23,6 +23,8 @@
       --safeBottom: env(safe-area-inset-bottom, 0px);
       --safeLeft: env(safe-area-inset-left, 0px);
       --safeRight: env(safe-area-inset-right, 0px);
+      --vvTop: 0px;
+      --vvBottom: 0px;
     }
     *{ box-sizing:border-box; }
     html, body { height: 100%; }
@@ -42,7 +44,11 @@
       height: 100svh;
       height: calc(var(--vh, 1vh) * 100);
       min-height: 100vh;
-      padding: calc(14px + var(--safeTop)) calc(14px + var(--safeRight)) calc(14px + var(--safeBottom)) calc(14px + var(--safeLeft));
+      padding:
+        calc(14px + var(--safeTop) + var(--vvTop))
+        calc(14px + var(--safeRight))
+        calc(14px + var(--safeBottom) + var(--vvBottom))
+        calc(14px + var(--safeLeft));
       display:flex;
       flex-direction: column;
       gap: 12px;
@@ -585,6 +591,15 @@
         const hRaw = vv ? vv.height : (window.innerHeight || 0);
         const h = Math.max(320, hRaw);
         document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
+        if (vv) {
+          const top = Math.max(0, Number(vv.offsetTop || 0));
+          const bottom = Math.max(0, (window.innerHeight || 0) - (Number(vv.height || 0) + Number(vv.offsetTop || 0)));
+          document.documentElement.style.setProperty('--vvTop', top + 'px');
+          document.documentElement.style.setProperty('--vvBottom', bottom + 'px');
+        } else {
+          document.documentElement.style.setProperty('--vvTop', '0px');
+          document.documentElement.style.setProperty('--vvBottom', '0px');
+        }
       } catch(e) {}
     }
 
