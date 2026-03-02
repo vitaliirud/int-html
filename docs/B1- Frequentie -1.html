@@ -606,7 +606,9 @@
         // Add a conservative fallback so bottom actions stay visible.
         const ua = String(navigator.userAgent || '');
         const isIOS = /iPad|iPhone|iPod/.test(ua);
-        const isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || (navigator && (navigator as any).standalone);
+        const isStandalone =
+          (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+          (typeof navigator !== 'undefined' && Boolean(navigator.standalone));
         let iosToolbar = 0;
         if (isIOS && !isStandalone) {
           const vvBottom = vv ? Math.max(0, (window.innerHeight || 0) - (Number(vv.height || 0) + Number(vv.offsetTop || 0))) : 0;
