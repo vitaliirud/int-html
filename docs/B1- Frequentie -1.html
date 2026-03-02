@@ -145,18 +145,34 @@
       padding: 0 34px;
     }
     .word{
-      font-size: 40px;
-      line-height: 1.1;
-      font-weight: 600;
-      letter-spacing: -0.02em;
+      width: 100%;
       text-align:center;
+      white-space: normal;
+    }
+    .word-title{
+      font-size: 40px;
+      line-height: 1.12;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      max-width: 100%;
       white-space: pre-wrap;
       word-break: normal;
       overflow-wrap: normal;
       hyphens: none;
     }
+    .word-forms{
+      margin-top: 10px;
+      font-size: 22px;
+      line-height: 1.25;
+      font-weight: 650;
+      color: rgba(226,232,240,0.78);
+      white-space: pre-wrap;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
     @media (max-width: 420px){
-      .word{ font-size: 34px; }
+      .word-title{ font-size: 34px; }
+      .word-forms{ font-size: 19px; }
     }
     .audio-btn{
       position:absolute;
@@ -293,7 +309,10 @@
       <div class="card-wrap">
         <div class="card" id="card">
           <div class="wordline">
-            <div class="word" id="word"></div>
+            <div class="word">
+              <div class="word-title" id="wordTitle"></div>
+              <div class="word-forms" id="wordForms"></div>
+            </div>
             <button class="audio-btn" id="btnAudio" type="button" aria-label="Проиграть аудио">🔊</button>
           </div>
           <div class="notes" id="notes"></div>
@@ -334,7 +353,8 @@
 
     const elCountLabel = document.getElementById('countLabel');
     const elMetaText = document.getElementById('metaText');
-    const elWord = document.getElementById('word');
+    const elWordTitle = document.getElementById('wordTitle');
+    const elWordForms = document.getElementById('wordForms');
     const elNotes = document.getElementById('notes');
     const elImgWrap = document.getElementById('imgWrap');
     const elImg = document.getElementById('img');
@@ -384,22 +404,34 @@
         .replace(/'/g, '&#39;');
     }
 
-    function fitWord(){
-      try {
-        elWord.style.fontSize = '';
-        const text = String(elWord.textContent || '').trim();
-        if (!text) return;
-        // Allow wrapping on spaces/hyphens; only shrink long single tokens.
-        if (/[s-]/.test(text)) return;
+    function splitTitleAndForms(input){
+      const s = String(input || '').trim();
+      const idx = s.indexOf(':');
+      if (idx <= 0) return { title: s, forms: '' };
+      const left = s.slice(0, idx).trim();
+      const right = s.slice(idx + 1).trim();
+      if (!left || !right) return { title: s, forms: '' };
+      return { title: left, forms: right };
+    }
 
-        const cs = window.getComputedStyle(elWord);
+    function fitWordTitle(){
+      try {
+        elWordTitle.style.fontSize = '';
+        const text = String(elWordTitle.textContent || '').trim();
+        if (!text) return;
+
+        const cs = window.getComputedStyle(elWordTitle);
         const initial = parseFloat(cs.fontSize || '40') || 40;
         let size = initial;
-        const min = 22;
+        const min = 20;
         let guard = 0;
-        while (guard < 18 && size > min && elWord.scrollWidth > elWord.clientWidth) {
+        const overflows = () =>
+          (elWordTitle.scrollWidth > elWordTitle.clientWidth + 1) ||
+          (elWordTitle.scrollHeight > elWordTitle.clientHeight + 1);
+
+        while (guard < 24 && size > min && overflows()) {
           size = Math.max(min, size - 1);
-          elWord.style.fontSize = size + 'px';
+          elWordTitle.style.fontSize = size + 'px';
           guard++;
         }
       } catch(e) {}
@@ -422,8 +454,9 @@
       btnNext.disabled = !has || cursor >= (order.length - 1);
 
       if (!c){
-        elWord.textContent = '—';
-        try { elWord.style.fontSize = ''; } catch(e) {}
+        elWordTitle.textContent = '—';
+        elWordForms.textContent = '';
+        try { elWordTitle.style.fontSize = ''; } catch(e) {}
         elNotes.classList.remove('show');
         elNotes.innerHTML = '';
         elImgWrap.classList.remove('show');
@@ -436,8 +469,11 @@
 
       const prompt = String(c.back ?? '—');
       const answer = String(c.front ?? '—');
-      elWord.textContent = showBack ? answer : prompt;
-      fitWord();
+      const face = showBack ? answer : prompt;
+      const parts = splitTitleAndForms(face);
+      elWordTitle.textContent = parts.title || '—';
+      elWordForms.textContent = parts.forms || '';
+      fitWordTitle();
 
       const notesHtml = showBack ? fmtNotes(c.notes) : '';
       if (notesHtml){
@@ -543,7 +579,11 @@
 
     function setVh(){
       try {
-        const h = Math.max(320, window.innerHeight || 0);
+        const vv = (window.visualViewport && typeof window.visualViewport.height === 'number')
+          ? window.visualViewport
+          : null;
+        const hRaw = vv ? vv.height : (window.innerHeight || 0);
+        const h = Math.max(320, hRaw);
         document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
       } catch(e) {}
     }
@@ -568,6 +608,12 @@
     setVh();
     window.addEventListener('resize', () => { setVh(); }, { passive: true });
     window.addEventListener('orientationchange', () => { setTimeout(setVh, 50); }, { passive: true });
+    if (window.visualViewport) {
+      try {
+        window.visualViewport.addEventListener('resize', () => { setVh(); }, { passive: true });
+        window.visualViewport.addEventListener('scroll', () => { setVh(); }, { passive: true });
+      } catch(e) {}
+    }
     render();
   </script>
 </body>
